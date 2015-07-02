@@ -1,0 +1,138 @@
+defaultTasks('installOrientDb')
+
+//
+// command: gradlew run to run OrientDb
+//
+
+project.ext {
+     c_group   = 'com.orientechnologies'
+     c_name    = 'orientdb-community'
+     c_version = '2.0.11'
+     
+     // ###
+     c_distDir = file("build/${c_name}-${c_version}")
+     c_binDir  = file("${c_distDir}/bin")
+}
+
+def depend1 = [ group: "${c_group}", 
+    name:       "${c_name}", 
+    version:    "${c_version}", 
+    classifier: 'distribution', 
+    ext:        'zip' ] ;
+
+def gi = groovy.inspect.swingui.ObjectBrowser.&inspect; // for debug
+
+// apply plugin: 'base'
+
+apply plugin: 'java'
+
+//apply plugin: 'groovy'
+//apply plugin: 'application'
+//mainClassName = 'groovy.ui.Main'
+
+configurations {
+    config1
+}
+
+repositories {
+	mavenCentral()
+}
+
+task('run') << {
+    def isWin = System.properties.'os.name'.contains('Windows');
+    // println c_binDir; 
+    
+    List<String> ags = [] as List<String>;
+    
+    if ( isWin ) {
+        ags << 'cmd'
+        ags << '/c'
+        
+        //ags << 'start'
+        //ags << 'cmd'
+        //ags << '/c'
+        
+        ags << 'server.bat'
+    } else {
+        ags << 'sh'
+        ags << 'server.sh'
+    }
+    
+    def pb = new ProcessBuilder( ags );
+    pb.inheritIO(); // I think this requires at least Java 7
+    pb.directory(c_binDir);
+    
+    Map<String, String> env = pb.environment();
+    env.put("ORIENTDB_ROOT_PASSWORD", "admin");
+    
+    def ps = pb.start();
+    ps.waitFor();
+}
+
+/*
+task('run2') << {
+    def isWin = System.properties.'os.name'.contains('Windows');
+    println c_binDir;
+    
+    List<String> ags = [] as List<String>;
+    
+    if ( isWin ) {
+        ags << '/c';
+        
+        //ags << 'start'
+        //ags << 'cmd'
+        //ags << '/c'
+        
+        ags << 'server.bat'
+    } else {
+        ags << 'sh'
+        ags << 'server.sh'
+    }
+    
+      
+    
+    //<exec executable="cmd">
+    //    <arg value="/c"/>
+    //    <arg value="ant.bat"/>
+    //    <arg value="-p"/>
+    //</exec>
+    
+    
+    String sExec = isWin ? 'cmd' : 'sh' ;
+    ant.exec( executable: sExec, dir: c_binDir.path ) {
+        ant.env( key: 'ORIENTDB_ROOT_PASSWORD', value: 'admin' )
+        ags.each { ag ->
+            arg( value: "${ag}".toString() )
+        }
+    }
+      
+}
+*/
+
+task('installOrientDb') << {
+	configurations.config1.resolve(); 
+	def distFile = configurations.config1.singleFile;
+	
+	if ( !c_distDir.exists() ) {
+	    ant.unzip( src: distFile.path, dest: 'build' )
+	    
+        // <chmod  dir="${dist}/bin" perm="ugo+rx" includes="**/*.sh"/>
+        ant.chmod( dir: c_binDir.path, perm: '+x'  , includes: '**/*.sh', verbose: 'true' )
+	} else {
+	    println "### Skipping unpack - (already exploded -  ${distFile.name})"
+	}
+		
+	File theScriptFile = file('helpers/ConfigCors.groovy');
+	def gs = new GroovyShell( this.getClass().classLoader );
+
+	def gcl = gs.getClassLoader();
+	def cls = gcl.parseClass( theScriptFile );
+	cls.newInstance( 'distDir': c_distDir ).run();
+}
+
+dependencies {
+	config1( depend1 )
+}
+
+
+
