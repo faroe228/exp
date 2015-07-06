@@ -92,8 +92,8 @@ def sendPost( String aStrUrl, String aStrData, Map headersMap = [:], String aStr
 def createDb = { String aDbName = 'general' 
     // curl --user root:admin -X POST "http://%hostIp%:2480/database/general/plocal/graph"
     
-    String sUrl = "http://localhost:2480/database/${aDbName}/plocal/graph";
-
+    String sUrl = "http://${host}:${port}/database/${aDbName}/plocal/graph";
+    
     String sResp = sendPost( sUrl, null, [:], 'root', 'admin' );
     println sResp;
 } ;
