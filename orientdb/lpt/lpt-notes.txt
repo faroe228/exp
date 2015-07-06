@@ -1,0 +1,48 @@
+
+note does not work very well with curl under cygwin on Windows 7 - hung most of the time
+
+// 1 optional last part of url: /document or /graph default is /document
+curl --user root:admin -X POST http://localhost:2480/database/general/plocal/graph
+
+// 2
+curl --user admin:admin -d "create class general" "http://localhost:2480/command/general/sql"
+
+// 3
+curl --user admin:admin --header "Accept: text/csv" -d "INSERT INTO general CONTENT {'name': 'John', 'surname': 'Doe'}" "http://localhost:2480/command/general/sql"
+
+// 4
+curl --user admin:admin --header "Accept: text/csv" -d "select from general" "http://localhost:2480/command/general/sql"
+
+
+
+
+
+POST - Database
+
+Create a new database. Requires additional authentication to the server.
+
+Syntax for the url `http://:
+
+storage can be
+'plocal' for disk-based database
+'memory' for in memory only database.
+type, is optional, and can be document or graph. By default is a document.
+Example
+
+HTTP POST request: http://localhost:2480/database/demo2/local HTTP response:
+
+
+Console - CREATE DATABASE
+Creates a new database.
+
+Syntax
+
+CREATE DATABASE <database-url> [<user> <password> <storage-type> [<db-type>]]
+Where:
+
+database-url The url of the database to create in the format '<mode>:<path>'
+user on remote database is the Server's administrator name
+password on remote database is the Server's administrator password
+storage-type The type of the storage between 'plocal' for disk-based database and 'memory' for in memory only database. Look at Storage types.
+db-type Optional, is the database type between "graph" (the default) and "document"
+
