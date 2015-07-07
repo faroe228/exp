@@ -1,5 +1,5 @@
-//import java.util.Random;
-//gRand = new Random();
+// import java.util.Random;
+// gRand = new Random();
 
 /*
 idea for dojo store use
@@ -43,6 +43,12 @@ String password = "admin"
 String host     = "localhost" 
 String port     = "2480"     
 
+// allow override of host e.g. groovy "-Dhost=192.168.1.199" setup_db.groovy
+String sp_host = System.properties.'host';
+if ( sp_host != null ) {
+        host = new String( sp_host ).trim();
+}
+
 String sUrlForSql = "http://${host}:${port}/command/general/sql".trim();
 
 def sendPost( String aStrUrl, String aStrData, Map headersMap = [:], String aStrUid = '', String aStrPwd = '') {
@@ -54,7 +60,9 @@ def sendPost( String aStrUrl, String aStrData, Map headersMap = [:], String aStr
     
     if ( !noAuth ) {
         String userpass  = aStrUid + ":" + aStrPwd;
-        String basicAuth = "Basic " + new String( java.util.Base64.getEncoder().encode( userpass.getBytes() ) );    
+        // oops - java.util.Base64 requires Java 8
+        // String basicAuth = "Basic " + new String( java.util.Base64.getEncoder().encode( userpass.getBytes() ) );   
+        String    basicAuth = "Basic " + userpass.bytes.encodeBase64().toString();  
         con.setRequestProperty ("Authorization", basicAuth);    
     }
     
