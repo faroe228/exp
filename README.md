@@ -2,9 +2,12 @@
 
 # Notes:
     curl -kOL https://github.com/faroe228/exp/archive/trunk.zip keeps getting older version
-    use master.zip instead
+    use master.zip instead of trunk.zip
     
 # nix
+    
+    `(find exp-master/orientdb |grep shutdown.sh)`
+    
     rm master.zip
     rm -R exp-master
     
