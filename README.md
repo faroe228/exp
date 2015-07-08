@@ -19,6 +19,7 @@
     unzip master.zip
     cd exp-master/orientdb
     chmod +x gradlew
+    
     ./gradlew installOrientDb
     
     if [ `which nohup` ]
