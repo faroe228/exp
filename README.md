@@ -4,7 +4,11 @@
     curl -kOL https://github.com/faroe228/exp/archive/trunk.zip keeps getting older version
     use master.zip instead of trunk.zip
     
+    # how to find groovy-#.#.#.jar
+    find .  |grep -e "/groovy-[0-9]\+\.[0-9]\+\.[0-9]\+\.jar"
+    
 # nix
+    echo beg
     
     `(find exp-master/orientdb |grep shutdown.sh)`
     
@@ -16,13 +20,21 @@
     cd exp-master/orientdb
     chmod +x gradlew
     ./gradlew installOrientDb
-    nohup ./gradlew run &
+    
+    if [ `which nohup` ]
+    then
+        echo "### running ordb server in bg WITH nohup"
+        nohup ./gradlew run &
+    else
+        # Win Git Bash does not have nohup
+        echo "### running ordb server in bg WITHOUT nohup"
+        ./gradlew run &
+    fi
     
     sleep 10
+    ./gradlew setupDb
     
-    groovy lpt/setup_db.groovy
-    
-    echo done
+    echo end
         
 # nix svn export
     
@@ -34,7 +46,7 @@
     
     sleep 10
     
-    groovy lpt/setup_db.groovy
+    ./gradlew setupDb
     
     echo done
 
@@ -52,6 +64,6 @@
 # console 2
 
     cd exp-trunk\orientdb
-    call groovy lpt\setup_db.groovy
+    call gradlew setupDb
 
 
