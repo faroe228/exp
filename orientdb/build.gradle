@@ -146,3 +146,35 @@ task('setupDb') << {
     //
 }
 
+// Object fromJson(String strJson) { return new groovy.json.JsonSlurper().parseText(strJson); }
+
+task('runScript') << {
+    //
+    
+    // gradlew runScript "-PscriptPath=lpt/echoArgs.groovy" -PP0=how  -PP1=now "-PP2=brown cow"
+    
+    def scriptPathValue = project.properties['scriptPath'];
+    assert scriptPathValue != null;
+    
+	// File theScriptFile = file('lpt/setup_db.groovy');
+	File theScriptFile = file( "${scriptPathValue}".toString() );
+	assert theScriptFile.exists();
+	
+	def gs = new GroovyShell( this.getClass().classLoader );
+
+	def gcl = gs.getClassLoader();
+	def cls = gcl.parseClass( theScriptFile );
+	
+	List<String> ags = [] as List<String>;
+	256.times {
+	    String k = "P${it}".trim();
+	    def theProp = project.properties[k];
+	    if (theProp != null) {
+	       ags << "${theProp}".toString();      
+	    }
+	}
+	
+	cls.main( ags as String[] );
+    //
+}
+
