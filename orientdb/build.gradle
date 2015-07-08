@@ -134,5 +134,15 @@ dependencies {
 	config1( depend1 )
 }
 
+task('setupDb') << {
+    //
+	File theScriptFile = file('lpt/setup_db.groovy');
+	def gs = new GroovyShell( this.getClass().classLoader );
 
+	def gcl = gs.getClassLoader();
+	def cls = gcl.parseClass( theScriptFile );
+	// cls.newInstance( 'distDir': c_distDir ).run();  
+	cls.newInstance().run();
+    //
+}
 
