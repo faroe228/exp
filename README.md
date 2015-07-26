@@ -1,8 +1,8 @@
 # exp
 
 # Notes:
-    curl -kOL https://github.com/faroe228/exp/archive/trunk.zip keeps getting older version
-    use master.zip instead of trunk.zip
+    curl -kOL https://github.com/faroe228/exp/archive/master.zip
+    # don't use above url ending with trunk.zip - keeps getting older version
     
     # how to find groovy-#.#.#.jar
     find .  |grep -e "/groovy-[0-9]\+\.[0-9]\+\.[0-9]\+\.jar"
